@@ -1,13 +1,14 @@
 import sqlite3
 import time
 import paramiko
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 DB_PATH = 'banned_ips.db'
-UNBAN_THRESHOLD = 38600  # Seuil de débanissement en secondes ( 1 journée)
-mikrotik_host = "YOUR_MIKROTIK_IP"
-mikrotik_user = "YOUR_USER_ON_MIKROTIK"
-mikrotik_password = "YOUR_PASSWORD_ON_MIKROTIK"
-
+UNBAN_THRESHOLD = 10  # Seuil de débanissement en secondes ( 1 journée)
+mikrotik_host = os.getenv('MIKROTIK_HOST')
+mikrotik_user = os.getenv('MIKROTIK_USER')
+mikrotik_password = os.getenv('MIKROTIK_PASSWORD')
 def unban_old_ips():
     now = int(time.time())
     threshold_time = now - UNBAN_THRESHOLD

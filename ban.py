@@ -1,11 +1,13 @@
 import sqlite3
 from datetime import datetime
 import paramiko
+from dotenv import load_dotenv
+import os
 import time
 import sys
 import requests
-api_key = "YOu_API_TOKEN_HERE"
-
+load_dotenv()
+api_key = os.getenv('API_KEY')
 report_type_mapping = {
     "1": ("DNS Compromise", "Altering DNS records resulting in improper redirection."),
     "2": ("DNS Poisoning", "Falsifying domain server cache (cache poisoning)."),
@@ -127,9 +129,9 @@ if len(sys.argv) > 2:
     report_type = sys.argv[2]
 
 
-mikrotik_host = "YOUR_MIKROTIK_IP"
-mikrotik_user = "YOUR_USER_ON_MIKROTIK"
-mikrotik_password = "YOUR_PASSWORD_ON_MIKROTIK"
+mikrotik_host = os.getenv('MIKROTIK_HOST')
+mikrotik_user = os.getenv('MIKROTIK_USER')
+mikrotik_password = os.getenv('MIKROTIK_PASSWORD')
 
 setup_database()
 add_ip_to_db(fail2ban_ip)

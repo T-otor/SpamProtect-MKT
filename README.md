@@ -7,6 +7,7 @@ SpamProtect, Mikrotik SSH Version
 - paramiko
 - sys
 - sqlite3
+- dotenv
 
 # Configuration :
 ## Accès et clé API
