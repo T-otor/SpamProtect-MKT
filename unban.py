@@ -3,7 +3,7 @@ import time
 import paramiko
 
 DB_PATH = 'banned_ips.db'
-UNBAN_THRESHOLD = 600  # Seuil de débanissement en secondes (10 minutes)
+UNBAN_THRESHOLD = 38600  # Seuil de débanissement en secondes ( 1 journée)
 mikrotik_host = "YOUR_MIKROTIK_IP"
 mikrotik_user = "YOUR_USER_ON_MIKROTIK"
 mikrotik_password = "YOUR_PASSWORD_ON_MIKROTIK"
