@@ -5,6 +5,33 @@ import time
 import sys
 import requests
 api_key = "YOu_API_TOKEN_HERE"
+
+report_type_mapping = {
+    "1": ("DNS Compromise", "Altering DNS records resulting in improper redirection."),
+    "2": ("DNS Poisoning", "Falsifying domain server cache (cache poisoning)."),
+    "3": ("Fraud Orders", "Fraudulent orders."),
+    "4": ("DDoS Attack", "Participating in distributed denial-of-service (usually part of botnet)."),
+    "5": ("FTP Brute-Force", ""),
+    "6": ("Ping of Death", "Oversized IP packet."),
+    "7": ("Phishing", "Phishing websites and/or email."),
+    "8": ("Fraud VoIP", ""),
+    "9": ("Open Proxy", "Open proxy, open relay, or Tor exit node."),
+    "10": ("Web Spam", "Comment/forum spam, HTTP referer spam, or other CMS spam."),
+    "11": ("Email Spam", "Spam email content, infected attachments, and phishing emails."),
+    "12": ("Blog Spam", "CMS blog comment spam."),
+    "13": ("VPN IP", "Conjunctive category."),
+    "14": ("Port Scan", "Scanning for open ports and vulnerable services."),
+    "15": ("Hacking", ""),
+    "16": ("SQL Injection", "Attempts at SQL injection."),
+    "17": ("Spoofing", "Email sender spoofing."),
+    "18": ("Brute-Force", "Credential brute-force attacks on webpage logins and services like SSH, FTP, SIP, SMTP, RDP, etc."),
+    "19": ("Bad Web Bot", "Webpage scraping and crawlers that do not honor robots.txt."),
+    "20": ("Exploited Host", "Host is likely infected with malware and being used for other attacks or to host malicious content."),
+    "21": ("Web App Attack", "Attempts to probe for or exploit installed web applications."),
+    "22": ("SSH", "Secure Shell (SSH) abuse."),
+    "23": ("IoT Targeted", "Abuse was targeted at an 'Internet of Things' type device.")
+}
+
 def setup_database():
     conn = sqlite3.connect('banned_ips.db')
     cursor = conn.cursor()
@@ -45,34 +72,36 @@ def add_ip_to_mikrotik_ssh(ip, mikrotik_host, mikrotik_user, mikrotik_password):
 def abuseipdb_report(ip, report_type):
     # Placeholder for AbuseIPDB reporting logic
     report_id = None
-    print(f"Reporting {ip} to AbuseIPDB... (not implemented)")
-    # Message prédéfini pour le type de report
-    if report_type == "spam":
-        print(f"Report type: Spam - {ip} reported for spam activity.")
-    elif report_type == "malware":
-        print(f"Report type: Malware - {ip} reported for malware activity.")
-    elif report_type == "phishing":
-        print(f"Report type: Phishing - {ip} reported for phishing activity.")
-    elif report_type == "ssh":
-        print(f"Report type: SSH - {ip} reported for SSH brute force activity. Unban : https://unban-request.totor.systems")
-        comment = f"Report type: SSH - {ip} reported for SSH brute force activity. Unban : https://unban-request.totor.systems"
-        report_id = "22,18"
-    
-    # POST request to AbuseIPDB (not implemented)
-    url = "https://api.abuseipdb.com/api/v2/report"
+    comment = ""
 
+    if report_type in report_type_mapping:
+        name, description = report_type_mapping[report_type]
+        print(f"Report type: {name} - {ip} reported for {description}")
+        comment = f"Report type: {name} - {ip} reported for {description}."
+
+        # Set report_id based on the report_type
+        if report_type == "22":
+            report_id = "22,18"
+            comment += " Unban: https://unban-request.totor.systems"
+        else:
+            report_id = report_type
+    else:
+        print(f"Unknown report type: {report_type}")
+
+    print(f"Reporting {ip} to AbuseIPDB...")
+
+    # POST request to AbuseIPDB
+    url = "https://api.abuseipdb.com/api/v2/report"
     payload = {
         "ip": ip,
         "categories": report_id if report_id else "18",  # Default to 18 if not specified
         "comment": comment,
         "timestamp": datetime.now().astimezone().isoformat()
     }
-
     headers = {
         "Key": api_key,
         "Accept": "application/json"
     }
-
     try:
         response = requests.post(url, data=payload, headers=headers)
         if response.status_code == 200:
