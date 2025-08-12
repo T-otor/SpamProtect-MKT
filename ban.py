@@ -80,13 +80,7 @@ def abuseipdb_report(ip, report_type):
         name, description = report_type_mapping[report_type]
         print(f"Report type: {name} - {ip} reported for {description}")
         comment = f"Report type: {name} - {ip} reported for {description}."
-
-        # Set report_id based on the report_type
-        if report_type == "22":
-            report_id = "22,18"
-            comment += " Unban: https://unban-request.totor.systems"
-        else:
-            report_id = report_type
+        report_id = report_type
     else:
         print(f"Unknown report type: {report_type}")
 
